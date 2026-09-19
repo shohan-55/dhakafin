@@ -1,0 +1,29 @@
+{
+  "_motion-COIl6417.js": {
+    "file": "assets/motion-COIl6417.js",
+    "name": "motion"
+  },
+  "_three-CJAMf2QS.js": {
+    "file": "assets/three-CJAMf2QS.js",
+    "name": "three"
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-JvBe_IKD.css",
+    "name": "app",
+    "names": [
+      "app.css"
+    ],
+    "src": "resources/css/app.css",
+    "isEntry": true
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-hrO-LNQZ.js",
+    "name": "app",
+    "src": "resources/js/app.js",
+    "isEntry": true,
+    "imports": [
+      "_three-CJAMf2QS.js",
+      "_motion-COIl6417.js"
+    ]
+  }
+}
