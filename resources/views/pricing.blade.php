@@ -18,7 +18,7 @@
     <div class="container">
         <div class="price-grid" data-reveal-group>
             @foreach($packages as $pkg)
-            <div class="price-card {{ !empty($pkg['featured']) ? 'price-card--featured' : '' }}" data-tilt>
+            <div class="price-card {{ !empty($pkg['featured']) ? 'price-card--featured' : '' }}" data-tilt data-spotlight>
                 @if(!empty($pkg['featured']))<span class="price-badge">{{ $pkg['tag'] }}</span>@endif
                 <h3>{{ $pkg['name'] }}</h3>
                 <div class="price-num"><strong>{{ $pkg['price'] }}</strong><span>{{ $pkg['period'] }}</span></div>

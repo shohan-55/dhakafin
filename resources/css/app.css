@@ -564,3 +564,35 @@ html.no-motion [data-reveal] { transform: none; opacity: 1; }
     .ticker-track { animation: none; }
     .hero-scroll-thumb { display: none; }
 }
+
+/* ==========================================================================
+   Ultra-premium upgrades — wipes · char reveals · sheen · spotlight
+   ========================================================================== */
+.page-wipe { position: fixed; inset: 0; z-index: 90; pointer-events: none; visibility: hidden; }
+html.no-motion .page-wipe { display: none; }
+.wipe-layer { position: absolute; inset: -1px; transform: translateY(101%); will-change: transform; }
+.wipe-layer--b { background: #04110c; }
+.wipe-layer--a { background: linear-gradient(115deg, var(--mint) 0%, #17b877 45%, #041b13 100%); }
+.wipe-brand { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) translateY(20px); opacity: 0; font-family: var(--font-display); font-size: clamp(28px, 4.6vw, 56px); font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.wipe-brand span { color: #04110c; }
+.wipe-brand em { font-style: normal; color: var(--gold); text-shadow: 0 0 22px rgba(255, 255, 255, 0.25); }
+html.wipe-arrived .page-wipe { visibility: visible; }
+html.wipe-arrived .wipe-layer { transform: translateY(0); }
+html.wipe-arrived .wipe-brand { opacity: 1; transform: translate(-50%, -50%); }
+
+.hero-word { display: inline-block; white-space: nowrap; overflow: hidden; vertical-align: top; padding-bottom: 0.09em; margin-bottom: -0.09em; }
+.hero-ch { display: inline-block; will-change: transform; }
+
+.hero-line--grad { background-size: 210% auto; animation: df-grad-sheen 9s ease-in-out infinite alternate; }
+@keyframes df-grad-sheen { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+html.no-motion .hero-line--grad { animation: none; }
+
+[data-spotlight] { position: relative; overflow: hidden; }
+[data-spotlight]::after { content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none; opacity: 0; transition: opacity 0.5s; background: radial-gradient(600px circle at var(--mx, 50%) var(--my, 50%), rgba(46, 217, 143, 0.10), transparent 42%); }
+[data-spotlight]:hover::after { opacity: 1; }
+
+/* spotlight refinements — featured badge must stick out */
+.price-card--featured { overflow: visible; }
+[data-spotlight]:not(.price-card--featured)::after { border-radius: inherit; }
+.price-card--featured::after { border-radius: calc(var(--radius) * 1.2); }
+[data-spotlight]::after { background: radial-gradient(620px circle at var(--mx, 50%) var(--my, 50%), rgba(46, 217, 143, 0.15), rgba(46, 217, 143, 0.05) 35%, transparent 48%); }

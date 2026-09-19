@@ -202,6 +202,64 @@ if (!coarse && !reduced) {
     }));
     scene.add(starsMesh);
 
+    // --- aurora ribbons (custom GLSL) ---
+    const auroraUniforms = {
+        uTime: { value: 0 },
+        uMouse: { value: new THREE.Vector2(0, 0) },
+        uColA: { value: new THREE.Color(0x2ed98f) },
+        uColB: { value: new THREE.Color(0xe7c164) },
+        uColC: { value: new THREE.Color(0x0a3d2e) },
+    };
+    const aurora = new THREE.Mesh(
+        new THREE.PlaneGeometry(120, 70),
+        new THREE.ShaderMaterial({
+            uniforms: auroraUniforms,
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending,
+            vertexShader: /* glsl */`
+                varying vec2 vUv;
+                void main() {
+                    vUv = uv;
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: /* glsl */`
+                uniform float uTime;
+                uniform vec2 uMouse;
+                uniform vec3 uColA;
+                uniform vec3 uColB;
+                uniform vec3 uColC;
+                varying vec2 vUv;
+
+                float band(vec2 uv, float speed, float freq, float amp, float offset) {
+                    float y = uv.y + sin(uv.x * freq + uTime * speed + offset) * amp
+                            + sin(uv.x * freq * 2.7 + uTime * speed * 1.6 + offset * 2.0) * amp * 0.35;
+                    float d = abs(y - 0.5 - uMouse.y * 0.08 + offset * 0.05);
+                    return smoothstep(0.16, 0.0, d) * (0.55 + 0.45 * sin(uv.x * 3.0 + uTime * speed));
+                }
+
+                void main() {
+                    vec2 uv = vUv;
+                    uv.x += uMouse.x * 0.05;
+                    float b1 = band(uv, 0.10, 2.2, 0.10, 0.0);
+                    float b2 = band(uv, 0.14, 1.6, 0.13, 1.7);
+                    float b3 = band(uv, 0.07, 3.1, 0.07, 3.9);
+                    vec3 col = uColA * b1 * 0.30 + uColB * b2 * 0.20 + uColC * b3 * 0.45;
+                    float edge = smoothstep(0.0, 0.22, uv.x) * smoothstep(1.0, 0.72, uv.x)
+                               * smoothstep(0.0, 0.24, uv.y) * smoothstep(1.0, 0.62, uv.y);
+                    col *= edge;
+                    col *= mix(0.38, 1.0, smoothstep(0.0, 1.0, uv.y)); // dim the lower half, keep legibility
+                    float hash = fract(sin(dot(vUv * uTime, vec2(12.9898, 78.233))) * 43758.5453);
+                    col += (hash - 0.5) * 0.012; // dither, anti-banding
+                    gl_FragColor = vec4(col, 1.0);
+                }
+            `,
+        })
+    );
+    aurora.position.set(isSmall ? 0 : 6, 2, -22);
+    scene.add(aurora);
+
     // --- interaction state ---
     let mx = 0, my = 0, tx = 0, ty = 0;
     if (!coarse) {
@@ -257,6 +315,10 @@ if (!coarse && !reduced) {
         camera.position.y = 0.6 + my * 0.5 - scrollProg * 3.5;
         camera.lookAt(isSmall ? 0 : 4, 0, 0);
 
+        auroraUniforms.uTime.value = t;
+        auroraUniforms.uMouse.value.set(mx, my);
+        aurora.position.x = (isSmall ? 0 : 6) + mx * 1.6;
+
         renderer.render(scene, camera);
     })();
 
@@ -269,15 +331,70 @@ if (!coarse && !reduced) {
 (function boot() {
     const pre = document.getElementById('preloader');
     const count = document.getElementById('preloaderCount');
+    const wipe = document.getElementById('pageWipe');
+    const arrived = document.documentElement.classList.contains('wipe-arrived');
     const heroBits = ['#heroEyebrow', '#heroSub', '#heroActions', '#heroStats', '.hero-side', '.hero-scroll'];
 
+    // char-split the non-gradient hero lines (gradient stays whole — background-clip safety)
+    if (!reduced) {
+        document.querySelectorAll('.hero-line-inner:not(.hero-line--grad)').forEach((line) => {
+            const text = line.textContent;
+            line.textContent = '';
+            line.setAttribute('aria-hidden', 'true');
+            text.split(/\s+/).forEach((word, wi, arr) => {
+                const w = document.createElement('span');
+                w.className = 'hero-word';
+                for (const ch of word) {
+                    const c = document.createElement('span');
+                    c.className = 'hero-ch';
+                    c.textContent = ch;
+                    w.appendChild(c);
+                }
+                line.appendChild(w);
+                if (wi < arr.length - 1) line.appendChild(document.createTextNode(' '));
+            });
+        });
+    }
+    const charSel = '.hero-ch';
+    const hasChars = !!document.querySelector(charSel);
+
     // set initial states
-    gsap.set('.hero-line-inner', { yPercent: 112 });
+    if (hasChars) gsap.set(charSel, { yPercent: 118, rotate: 10 });
+    else gsap.set('.hero-line-inner', { yPercent: 112 });
+    gsap.set('.hero-line--grad', hasChars ? { yPercent: 112 } : {});
     gsap.set(heroBits, { opacity: 0, y: 26 });
+
+    const heroIn = (tl, at) => {
+        if (hasChars) {
+            tl.to(charSel, { yPercent: 0, rotate: 0, duration: 1.05, ease: 'power4.out', stagger: 0.02 }, at)
+                .to('.hero-line--grad', { yPercent: 0, duration: 1.1, ease: 'power4.out' }, at + 0.28);
+        } else {
+            tl.to('.hero-line-inner', { yPercent: 0, duration: 1.15, ease: 'power4.out', stagger: 0.11 }, at);
+        }
+        tl.to(heroBits, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08 }, at + 0.4);
+        return tl;
+    };
+
+    // --- arrived via page wipe: no preloader, just unveil ---
+    if (arrived && wipe) {
+        document.documentElement.classList.remove('wipe-arrived');
+        try { sessionStorage.removeItem('df-wipe'); } catch (e) {}
+        if (pre) pre.remove();
+        const tl = gsap.timeline({
+            onComplete: () => { gsap.set(wipe, { visibility: 'hidden' }); window.__dfWiping = false; },
+        });
+        tl.to('.wipe-brand', { opacity: 0, y: -18, duration: 0.32, ease: 'power2.in' }, 0.12)
+            .to('.wipe-layer--a', { y: '-101%', duration: 0.72, ease: 'power4.inOut' }, 0.24)
+            .to('.wipe-layer--b', { y: '-101%', duration: 0.72, ease: 'power4.inOut' }, 0.34);
+        heroIn(tl, 0.5);
+        return;
+    }
 
     if (!pre || reduced) {
         if (pre) pre.remove();
-        gsap.set('.hero-line-inner', { yPercent: 0 });
+        if (hasChars) gsap.set(charSel, { yPercent: 0, rotate: 0 });
+        else gsap.set('.hero-line-inner', { yPercent: 0 });
+        gsap.set('.hero-line--grad', { yPercent: 0 });
         gsap.set(heroBits, { opacity: 1, y: 0 });
         return;
     }
@@ -292,9 +409,8 @@ if (!coarse && !reduced) {
     })
         .to('.preloader-inner', { opacity: 0, y: -26, duration: 0.45, ease: 'power2.in' }, '+=0.15')
         .to('.preloader-curtain--b', { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'power4.inOut' }, '-=0.1')
-        .to('.preloader-curtain--a', { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'power4.inOut' }, '-=0.62')
-        .to('.hero-line-inner', { yPercent: 0, duration: 1.15, ease: 'power4.out', stagger: 0.11 }, '-=0.55')
-        .to(heroBits, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out', stagger: 0.08 }, '-=0.7');
+        .to('.preloader-curtain--a', { clipPath: 'inset(0 0 100% 0)', duration: 0.8, ease: 'power4.inOut' }, '-=0.62');
+    heroIn(tl, '-=0.55');
 })();
 
 /* ==========================================================================
@@ -426,6 +542,75 @@ if (!reduced) {
             scrollTrigger: { trigger: fw, start: 'top 92%', once: true },
         });
     }
+}
+
+/* ==========================================================================
+   Page transitions — curtain wipe between pages
+   ========================================================================== */
+if (!reduced) {
+    document.addEventListener('click', (e) => {
+        if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+        const a = e.target.closest('a[href]');
+        if (!a || a.target === '_blank' || a.hasAttribute('download') || a.hasAttribute('data-scroll') || a.hasAttribute('data-no-wipe')) return;
+        const href = a.getAttribute('href');
+        if (!href || href.startsWith('#')) return;
+        let url;
+        try { url = new URL(href, window.location.href); } catch (err) { return; }
+        if (url.origin !== window.location.origin) return;
+        if (url.pathname === window.location.pathname && url.hash) return;
+        if (window.__dfWiping) { e.preventDefault(); return; }
+
+        const wipe = document.getElementById('pageWipe');
+        if (!wipe) return; // let normal navigation happen
+        e.preventDefault();
+        window.__dfWiping = true;
+        try { sessionStorage.setItem('df-wipe', '1'); } catch (err) {}
+        const go = () => { window.location.href = url.href; };
+        setTimeout(go, 1600); // hard fallback — never trap the user
+        gsap.set(wipe, { visibility: 'visible' });
+        gsap.timeline()
+            .to('.wipe-layer--b', { y: '0%', duration: 0.55, ease: 'power4.inOut' }, 0)
+            .to('.wipe-layer--a', { y: '0%', duration: 0.55, ease: 'power4.inOut' }, 0.09)
+            .to('.wipe-brand', { opacity: 1, y: 0, duration: 0.3, ease: 'power2.out' }, 0.42)
+            .call(go, null, 0.72);
+    }, true);
+}
+
+/* ==========================================================================
+   Nav link text scramble on hover
+   ========================================================================== */
+if (!coarse && !reduced) {
+    const glyphs = '!<>-_/[]{}=+*^?#%';
+    document.querySelectorAll('.nav-link').forEach((link) => {
+        const original = link.textContent;
+        let iv = null;
+        link.addEventListener('mouseenter', () => {
+            let frame = 0;
+            clearInterval(iv);
+            iv = setInterval(() => {
+                frame++;
+                const prog = frame / 9;
+                link.textContent = original.split('').map((c, i) =>
+                    (i / original.length < prog) ? c : glyphs[(Math.random() * glyphs.length) | 0]
+                ).join('');
+                if (frame >= 9) { clearInterval(iv); link.textContent = original; }
+            }, 34);
+        });
+        link.addEventListener('mouseleave', () => { clearInterval(iv); link.textContent = original; });
+    });
+}
+
+/* ==========================================================================
+   Card spotlight — cursor-following glow
+   ========================================================================== */
+if (!reduced) {
+    document.addEventListener('pointermove', (e) => {
+        const t = e.target.closest && e.target.closest('[data-spotlight]');
+        if (!t) return;
+        const r = t.getBoundingClientRect();
+        t.style.setProperty('--mx', `${e.clientX - r.left}px`);
+        t.style.setProperty('--my', `${e.clientY - r.top}px`);
+    }, { passive: true });
 }
 
 /* boot flag for the failsafe watchdog */

@@ -3,12 +3,12 @@
     "file": "assets/motion-COIl6417.js",
     "name": "motion"
   },
-  "_three-CJAMf2QS.js": {
-    "file": "assets/three-CJAMf2QS.js",
+  "_three-CNqgjX9e.js": {
+    "file": "assets/three-CNqgjX9e.js",
     "name": "three"
   },
   "resources/css/app.css": {
-    "file": "assets/app-BRbu4Cwr.css",
+    "file": "assets/app-C5x28FtQ.css",
     "name": "app",
     "names": [
       "app.css"
@@ -17,12 +17,12 @@
     "isEntry": true
   },
   "resources/js/app.js": {
-    "file": "assets/app-hrO-LNQZ.js",
+    "file": "assets/app-BiVvug3E.js",
     "name": "app",
     "src": "resources/js/app.js",
     "isEntry": true,
     "imports": [
-      "_three-CJAMf2QS.js",
+      "_three-CNqgjX9e.js",
       "_motion-COIl6417.js"
     ]
   }

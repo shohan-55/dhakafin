@@ -152,7 +152,7 @@
 <!-- ==================== COSTGUARD ==================== -->
 <section class="section costguard" id="costguard">
     <div class="container">
-        <div class="cg-panel">
+        <div class="cg-panel" data-spotlight>
             <div class="cg-scan" aria-hidden="true"></div>
             <div class="cg-copy">
                 <p class="eyebrow eyebrow--gold" data-reveal>Flagship — the CostGuard review</p>
@@ -233,7 +233,7 @@
         </div>
         <div class="why-grid" data-reveal-group>
             @foreach($why as $i => $w)
-            <div class="why-card" data-tilt>
+            <div class="why-card" data-tilt data-spotlight>
                 <span class="why-num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
                 <h3>{{ $w['title'] }}</h3>
                 <p>{{ $w['text'] }}</p>
@@ -251,7 +251,7 @@
         </div>
         <div class="quotes-grid" data-reveal-group>
             @foreach($testimonials as $t)
-            <figure class="quote-card">
+            <figure class="quote-card" data-spotlight>
                 <div class="quote-mark" aria-hidden="true">”</div>
                 <blockquote>{{ $t['quote'] }}</blockquote>
                 <figcaption>
@@ -279,7 +279,7 @@
         </div>
         <div class="price-grid" data-reveal-group>
             @foreach($packages as $pkg)
-            <div class="price-card {{ !empty($pkg['featured']) ? 'price-card--featured' : '' }}" data-tilt>
+            <div class="price-card {{ !empty($pkg['featured']) ? 'price-card--featured' : '' }}" data-tilt data-spotlight>
                 @if(!empty($pkg['featured']))<span class="price-badge">{{ $pkg['tag'] }}</span>@endif
                 <h3>{{ $pkg['name'] }}</h3>
                 <div class="price-num"><strong>{{ $pkg['price'] }}</strong><span>{{ $pkg['period'] }}</span></div>

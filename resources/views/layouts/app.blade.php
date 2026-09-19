@@ -26,6 +26,8 @@
                 if (c) c.classList.add('is-live');
             }
         }, 5000);
+        // page-transition arrival: keep wipe layers covering before CSS/JS boot
+        try { if (sessionStorage.getItem('df-wipe')) document.documentElement.classList.add('wipe-arrived'); } catch (e) {}
     </script>
 </head>
 <body class="{{ $bodyClass ?? '' }}">
@@ -47,6 +49,15 @@
         </div>
         <div class="preloader-curtain preloader-curtain--a"></div>
         <div class="preloader-curtain preloader-curtain--b"></div>
+    </div>
+
+    <!-- ====== PAGE TRANSITION WIPE ====== -->
+    <div class="page-wipe" id="pageWipe" aria-hidden="true">
+        <div class="wipe-layer wipe-layer--b"></div>
+        <div class="wipe-layer wipe-layer--a"></div>
+        <div class="wipe-brand" aria-hidden="true">
+            <span>Dhaka</span><em>Fin</em>
+        </div>
     </div>
 
     <!-- ====== CURSOR ====== -->
