@@ -15,7 +15,7 @@
 
 @if(auth()->user()->hasPermission('billing.manage',$organization))
 <div class="wscard" style="margin-top:16px"><h3>Record payment</h3><form method="post" action="{{ route('workspace.billing.payments.store') }}">@csrf
-<input type="hidden" name="idempotency_key" value="{{ (string) Illuminate\Support\Str::uuid() }}">
+<input type="hidden" name="idempotency_key" value="{{ (string) \Illuminate\Support\Str::uuid() }}">
 <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px">
 <div class="field"><label>Date</label><input type="date" name="payment_date" value="{{ date('Y-m-d') }}" required></div>
 <div class="field"><label>Amount (BDT)</label><input name="amount" required></div>
