@@ -5,12 +5,17 @@ use App\Http\Controllers\Auth\MfaChallengeController;
 use App\Http\Controllers\Auth\MfaSetupController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Tools\TaxCalendarController;
+use App\Http\Controllers\Tools\WithholdingCalculatorController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\Workspace\AuditLogController;
 use App\Http\Controllers\Workspace\DashboardController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
+Route::get('/tools/tds-vds-calculator', [WithholdingCalculatorController::class, 'create'])->name('withholding-calculator');
+Route::post('/tools/tds-vds-calculator', [WithholdingCalculatorController::class, 'store'])->name('withholding-calculator.calculate');
+Route::get('/tax-calendar', TaxCalendarController::class)->name('tax-calendar');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/register', [RegisterController::class, 'create'])->name('register');
