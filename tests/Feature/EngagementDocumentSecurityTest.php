@@ -108,6 +108,16 @@ class EngagementDocumentSecurityTest extends TestCase
         $foreign=Organization::create(['name'=>'Foreign Docs','slug'=>'foreign-docs']);
         $reviewer->organizations()->attach($foreign,['status'=>'active','role'=>'member']);
 
+        $foreignViewRole=Role::create([
+            'name'=>'Foreign Document Viewer',
+            'slug'=>'foreign-doc-viewer-'.uniqid(),
+            'scope'=>'organization',
+        ]);
+        $foreignViewRole->permissions()->attach(
+            Permission::where('slug','documents.view')->firstOrFail()
+        );
+        $reviewer->roles()->attach($foreignViewRole,['organization_id'=>$foreign->id]);
+
         $this->actingAs($reviewer)
             ->withSession(['current_organization_id'=>$foreign->id])
             ->get(route('workspace.documents.download',$document))
