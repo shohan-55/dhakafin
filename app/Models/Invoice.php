@@ -21,4 +21,13 @@ class Invoice extends Model
     public function organization(): BelongsTo { return $this->belongsTo(Organization::class); }
     public function lines(): HasMany { return $this->hasMany(InvoiceLine::class); }
     public function allocations(): HasMany { return $this->hasMany(PaymentAllocation::class); }
+
+    public function totalFormatted(): string { return $this->formatMinor($this->total_minor); }
+    public function paidFormatted(): string { return $this->formatMinor($this->paid_minor); }
+    public function balanceFormatted(): string { return $this->formatMinor($this->balance_minor); }
+
+    private function formatMinor(int $minor): string
+    {
+        return number_format(intdiv($minor,100)).'.'.str_pad((string)($minor%100),2,'0',STR_PAD_LEFT);
+    }
 }
