@@ -26,4 +26,19 @@ class MushakForm extends Model
     {
         return $this->belongsTo(Organization::class);
     }
+
+    public function totalValueFormatted(): string
+    {
+        return $this->formatMinor($this->total_value_minor);
+    }
+
+    public function totalVatFormatted(): string
+    {
+        return $this->formatMinor($this->total_vat_minor);
+    }
+
+    private function formatMinor(int $minor): string
+    {
+        return number_format(intdiv($minor, 100)).'.'.str_pad((string) ($minor % 100), 2, '0', STR_PAD_LEFT);
+    }
 }
