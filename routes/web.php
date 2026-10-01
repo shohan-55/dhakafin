@@ -11,6 +11,7 @@ use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\Workspace\AuditLogController;
 use App\Http\Controllers\Workspace\DashboardController;
 use App\Http\Controllers\Workspace\WithholdingTransactionController;
+use App\Http\Controllers\Workspace\Mushak63Controller;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -53,5 +54,15 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/tax/withholding', [WithholdingTransactionController::class, 'store'])
             ->middleware('permission:tax.manage')
             ->name('withholding.store');
+
+        Route::get('/vat/mushak-6-3', [Mushak63Controller::class, 'index'])
+            ->middleware('permission:vat.view')
+            ->name('mushak63.index');
+        Route::get('/vat/mushak-6-3/create', [Mushak63Controller::class, 'create'])
+            ->middleware('permission:vat.manage')
+            ->name('mushak63.create');
+        Route::post('/vat/mushak-6-3', [Mushak63Controller::class, 'store'])
+            ->middleware('permission:vat.manage')
+            ->name('mushak63.store');
     });
 });
