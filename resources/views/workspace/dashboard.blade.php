@@ -25,6 +25,9 @@
 @endif
 <div class="wscard"><h3>Security</h3><p class="muted"><a href="{{ route('mfa.setup') }}">Configure MFA</a> and protect sensitive finance access.</p></div>
 </div>
+@if(auth()->user()->hasPermission('vat.view',$organization))
+<div class="wscard" style="margin-top:16px"><h3>Mushak 6.3</h3><p class="muted">Create and retain organization-scoped VAT invoice drafts.</p><a href="{{ route('workspace.mushak63.index') }}"><strong>Open Mushak 6.3 →</strong></a></div>
+@endif
 @if(auth()->user()->hasPermission('audit-log.view',$organization))
 <div class="wscard" style="margin-top:16px"><h3>Audit trail</h3><p class="muted">Review sensitive activity for this organization.</p><a href="{{ route('workspace.audit-log') }}"><strong>Open audit log →</strong></a></div>
 @endif
