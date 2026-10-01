@@ -10,6 +10,7 @@ use App\Http\Controllers\Tools\WithholdingCalculatorController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\Workspace\AuditLogController;
 use App\Http\Controllers\Workspace\DashboardController;
+use App\Http\Controllers\Workspace\ComplianceObligationController;
 use App\Http\Controllers\Workspace\WithholdingTransactionController;
 use App\Http\Controllers\Workspace\Mushak63Controller;
 use Illuminate\Support\Facades\Route;
@@ -44,6 +45,13 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/audit-log', AuditLogController::class)
             ->middleware('permission:audit-log.view')
             ->name('audit-log');
+
+        Route::get('/compliance', [ComplianceObligationController::class, 'index'])
+            ->middleware('permission:compliance.view')
+            ->name('compliance.index');
+        Route::patch('/compliance/{obligation}/complete', [ComplianceObligationController::class, 'complete'])
+            ->middleware('permission:compliance.manage')
+            ->name('compliance.complete');
 
         Route::get('/tax/withholding', [WithholdingTransactionController::class, 'index'])
             ->middleware('permission:tax.view')
