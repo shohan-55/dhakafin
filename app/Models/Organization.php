@@ -17,8 +17,20 @@ class Organization extends Model
             ->withTimestamps();
     }
 
+    public function roles(): BelongsToMany
+    {
+        return $this->belongsToMany(Role::class, 'organization_role_user')
+            ->withPivot('user_id')
+            ->withTimestamps();
+    }
+
     public function complianceObligations(): HasMany
     {
         return $this->hasMany(ComplianceObligation::class);
+    }
+
+    public function auditEvents(): HasMany
+    {
+        return $this->hasMany(AuditEvent::class);
     }
 }
