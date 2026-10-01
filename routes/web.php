@@ -10,6 +10,7 @@ use App\Http\Controllers\Tools\WithholdingCalculatorController;
 use App\Http\Controllers\OrganizationSwitchController;
 use App\Http\Controllers\Workspace\AuditLogController;
 use App\Http\Controllers\Workspace\DashboardController;
+use App\Http\Controllers\Workspace\WithholdingTransactionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -42,5 +43,15 @@ Route::middleware('auth')->group(function (): void {
         Route::get('/audit-log', AuditLogController::class)
             ->middleware('permission:audit-log.view')
             ->name('audit-log');
+
+        Route::get('/tax/withholding', [WithholdingTransactionController::class, 'index'])
+            ->middleware('permission:tax.view')
+            ->name('withholding.index');
+        Route::get('/tax/withholding/create', [WithholdingTransactionController::class, 'create'])
+            ->middleware('permission:tax.manage')
+            ->name('withholding.create');
+        Route::post('/tax/withholding', [WithholdingTransactionController::class, 'store'])
+            ->middleware('permission:tax.manage')
+            ->name('withholding.store');
     });
 });
