@@ -13,6 +13,9 @@ use App\Http\Controllers\Workspace\DashboardController;
 use App\Http\Controllers\Workspace\ComplianceObligationController;
 use App\Http\Controllers\Workspace\WithholdingTransactionController;
 use App\Http\Controllers\Workspace\Mushak63Controller;
+use App\Http\Controllers\Workspace\EngagementController;
+use App\Http\Controllers\Workspace\DocumentController;
+use App\Http\Controllers\Workspace\DocumentReviewController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -72,5 +75,31 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/vat/mushak-6-3', [Mushak63Controller::class, 'store'])
             ->middleware('permission:vat.manage')
             ->name('mushak63.store');
+
+        Route::get('/engagements', [EngagementController::class, 'index'])
+            ->middleware('permission:engagements.view')
+            ->name('engagements.index');
+        Route::get('/engagements/create', [EngagementController::class, 'create'])
+            ->middleware('permission:engagements.manage')
+            ->name('engagements.create');
+        Route::post('/engagements', [EngagementController::class, 'store'])
+            ->middleware('permission:engagements.manage')
+            ->name('engagements.store');
+        Route::get('/engagements/{engagement}', [EngagementController::class, 'show'])
+            ->middleware('permission:engagements.view')
+            ->name('engagements.show');
+        Route::patch('/engagements/{engagement}/advance', [EngagementController::class, 'advance'])
+            ->middleware('permission:engagements.manage')
+            ->name('engagements.advance');
+
+        Route::post('/engagements/{engagement}/documents', [DocumentController::class, 'store'])
+            ->middleware('permission:documents.manage')
+            ->name('engagements.documents.store');
+        Route::get('/documents/{document}/download', [DocumentController::class, 'download'])
+            ->middleware('permission:documents.view')
+            ->name('documents.download');
+        Route::post('/documents/{document}/review', [DocumentReviewController::class, 'store'])
+            ->middleware('permission:documents.review')
+            ->name('documents.review');
     });
 });
