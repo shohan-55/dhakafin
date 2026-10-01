@@ -8,6 +8,8 @@ class HomepageTest extends TestCase
 {
     public function test_homepage_identifies_dhakafin_and_core_services(): void
     {
+        $this->withoutVite();
+
         $this->get('/')
             ->assertOk()
             ->assertSee('DhakaFin')
