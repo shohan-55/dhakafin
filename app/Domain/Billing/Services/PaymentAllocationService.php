@@ -28,6 +28,10 @@ final class PaymentAllocationService
                 throw new InvalidArgumentException('Only confirmed payments may be allocated.');
             }
 
+            if (!in_array($invoice->status,['issued','partially_paid'],true)) {
+                throw new InvalidArgumentException('Only issued invoices with an outstanding balance may receive allocations.');
+            }
+
             $available=$payment->amount_minor-$payment->allocated_amount_minor;
 
             if ($amountMinor>$available) {
