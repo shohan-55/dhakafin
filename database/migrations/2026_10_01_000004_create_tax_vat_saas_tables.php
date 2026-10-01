@@ -43,7 +43,7 @@ return new class extends Migration
             $table->string('counterparty_name')->nullable();
             $table->string('counterparty_tin')->nullable()->index();
             $table->unsignedBigInteger('base_amount_minor');
-            $table->unsignedInteger('rate_basis_points');
+            $table->unsignedInteger('rate_ppm');
             $table->unsignedBigInteger('withheld_amount_minor');
             $table->string('challan_reference')->nullable()->index();
             $table->date('challan_date')->nullable();
