@@ -16,6 +16,7 @@ use App\Http\Controllers\Workspace\Mushak63Controller;
 use App\Http\Controllers\Workspace\EngagementController;
 use App\Http\Controllers\Workspace\DocumentController;
 use App\Http\Controllers\Workspace\DocumentReviewController;
+use App\Http\Controllers\Workspace\BillingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -101,5 +102,21 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/documents/{document}/review', [DocumentReviewController::class, 'store'])
             ->middleware('permission:documents.review')
             ->name('documents.review');
+
+        Route::get('/billing', [BillingController::class, 'index'])
+            ->middleware('permission:billing.view')
+            ->name('billing.index');
+        Route::get('/billing/invoices/create', [BillingController::class, 'createInvoice'])
+            ->middleware('permission:billing.manage')
+            ->name('billing.invoices.create');
+        Route::post('/billing/invoices', [BillingController::class, 'storeInvoice'])
+            ->middleware('permission:billing.manage')
+            ->name('billing.invoices.store');
+        Route::patch('/billing/invoices/{invoice}/issue', [BillingController::class, 'issue'])
+            ->middleware('permission:billing.manage')
+            ->name('billing.invoices.issue');
+        Route::post('/billing/payments', [BillingController::class, 'storePayment'])
+            ->middleware('permission:billing.manage')
+            ->name('billing.payments.store');
     });
 });
