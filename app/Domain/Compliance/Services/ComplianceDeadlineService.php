@@ -63,11 +63,11 @@ final class ComplianceDeadlineService
         return ComplianceObligation::firstOrCreate(
             [
                 'organization_id' => $organization->getKey(),
-                'type' => $rule->category,
+                'compliance_rule_id' => $rule->getKey(),
                 'period_key' => $periodKey,
             ],
             [
-                'compliance_rule_id' => $rule->getKey(),
+                'type' => $rule->category,
                 'title' => $rule->title,
                 'due_date' => $dueDate->toDateString(),
                 'status' => 'open',
