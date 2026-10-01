@@ -24,7 +24,11 @@ final class EngagementWorkflow
 
     public function advance(Engagement $engagement): Engagement
     {
-        $next = self::NEXT[$engagement->stage] ?? null;
+        $current = $engagement->stage instanceof EngagementStage
+            ? $engagement->stage->value
+            : (string) $engagement->stage;
+
+        $next = self::NEXT[$current] ?? null;
 
         if (!$next) {
             throw new DomainException('Engagement cannot advance beyond its current stage.');
