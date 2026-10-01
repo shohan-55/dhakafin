@@ -47,11 +47,9 @@ class GenerateComplianceObligations extends Command
 
         foreach ($organizations as $organization) {
             foreach ($rules as $rule) {
-                $before = $organization->complianceObligations()->count();
-                $deadlines->generateMonthly($organization, $rule, $period);
-                $after = $organization->complianceObligations()->count();
+                $obligation = $deadlines->generateMonthly($organization, $rule, $period);
 
-                if ($after > $before) {
+                if ($obligation->wasRecentlyCreated) {
                     $created++;
                 }
             }
