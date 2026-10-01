@@ -17,9 +17,9 @@
 <td style="padding:10px;white-space:nowrap">{{ $tx->transaction_date->format('d M Y') }}</td>
 <td style="padding:10px">{{ strtoupper($tx->kind) }}</td>
 <td style="padding:10px">{{ $tx->counterparty_name ?: '—' }}</td>
-<td style="padding:10px">৳ {{ number_format($tx->base_amount_minor/100,2) }}</td>
-<td style="padding:10px">{{ rtrim(rtrim(number_format($tx->rate_ppm/10000,4,'.',''),'0'),'.') }}%</td>
-<td style="padding:10px">৳ {{ number_format($tx->withheld_amount_minor/100,2) }}</td>
+<td style="padding:10px">৳ {{ $tx->baseAmountFormatted() }}</td>
+<td style="padding:10px">{{ $tx->ratePercentFormatted() }}%</td>
+<td style="padding:10px">৳ {{ $tx->withheldAmountFormatted() }}</td>
 <td style="padding:10px">{{ ucfirst($tx->status) }}</td>
 </tr>
 @empty
