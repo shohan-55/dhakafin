@@ -9,7 +9,7 @@ class WithholdingTransaction extends Model
 {
     protected $fillable = [
         'organization_id','kind','reference','transaction_date','counterparty_name',
-        'counterparty_tin','base_amount_minor','rate_basis_points',
+        'counterparty_tin','base_amount_minor','rate_ppm',
         'withheld_amount_minor','challan_reference','challan_date',
         'status','metadata','created_by',
     ];
