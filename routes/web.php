@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\MfaSetupController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrganizationSwitchController;
+use App\Http\Controllers\Workspace\AuditLogController;
 use App\Http\Controllers\Workspace\DashboardController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,5 +34,8 @@ Route::middleware('auth')->group(function (): void {
 
     Route::middleware('tenant')->prefix('workspace')->name('workspace.')->group(function (): void {
         Route::get('/', DashboardController::class)->name('dashboard');
+        Route::get('/audit-log', AuditLogController::class)
+            ->middleware('permission:audit-log.view')
+            ->name('audit-log');
     });
 });
