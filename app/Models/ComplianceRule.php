@@ -33,6 +33,7 @@ class ComplianceRule extends Model
     public function scopePublished($query)
     {
         return $query->where('is_active', true)
+            ->whereNotNull('source_url')
             ->whereNotNull('published_at')
             ->whereNotNull('verified_at');
     }
