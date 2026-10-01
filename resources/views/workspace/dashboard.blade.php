@@ -29,6 +29,9 @@
 @endif
 <div class="wscard"><h3>Security</h3><p class="muted"><a href="{{ route('mfa.setup') }}">Configure MFA</a> and protect sensitive finance access.</p></div>
 </div>
+@if(auth()->user()->hasPermission('accounting.view',$organization))
+<div class="wscard" style="margin-top:16px"><h3>Accounting ledger</h3><p class="muted">Chart of accounts, balanced journals and trial balance.</p><a href="{{ route('workspace.accounting.index') }}"><strong>Open accounting →</strong></a></div>
+@endif
 @if(auth()->user()->hasPermission('billing.view',$organization))
 <div class="wscard" style="margin-top:16px"><h3>Billing & subscriptions</h3><p class="muted">Create invoices, record payments and track unapplied balances.</p><a href="{{ route('workspace.billing.index') }}"><strong>Open billing →</strong></a></div>
 @endif
