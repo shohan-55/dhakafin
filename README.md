@@ -33,7 +33,7 @@ php artisan key:generate
 npm install
 php artisan migrate
 npm run build
-php artisan test
+vendor/bin/phpunit
 php artisan serve
 ```
 
