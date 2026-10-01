@@ -8,5 +8,6 @@
 <div class="field"><label>Password</label><input type="password" name="password" autocomplete="current-password" required></div>
 <label style="display:flex;gap:9px;align-items:center;margin:16px 0"><input type="checkbox" name="remember" value="1"> Remember me</label>
 <button class="btn primary" style="width:100%;border:0" type="submit">Continue</button>
+<p class="muted" style="text-align:center;margin-top:18px">New to DhakaFin? <a href="{{ route('register') }}"><strong>Create a workspace</strong></a></p>
 </form></div>
 @endsection
