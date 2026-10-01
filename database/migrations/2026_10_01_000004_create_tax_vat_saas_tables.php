@@ -26,12 +26,17 @@ return new class extends Migration
         });
 
         Schema::table('compliance_obligations', function (Blueprint $table): void {
+            $table->dropUnique('org_obligation_period_unique');
             $table->foreignId('compliance_rule_id')
                 ->nullable()
                 ->after('organization_id')
                 ->constrained('compliance_rules')
                 ->nullOnDelete();
             $table->json('metadata')->nullable()->after('notes');
+            $table->unique(
+                ['organization_id','compliance_rule_id','period_key'],
+                'org_rule_period_unique'
+            );
         });
 
         Schema::create('withholding_transactions', function (Blueprint $table): void {
@@ -78,8 +83,13 @@ return new class extends Migration
         Schema::dropIfExists('withholding_transactions');
 
         Schema::table('compliance_obligations', function (Blueprint $table): void {
+            $table->dropUnique('org_rule_period_unique');
             $table->dropConstrainedForeignId('compliance_rule_id');
             $table->dropColumn('metadata');
+            $table->unique(
+                ['organization_id','type','period_key'],
+                'org_obligation_period_unique'
+            );
         });
 
         Schema::dropIfExists('compliance_rules');
