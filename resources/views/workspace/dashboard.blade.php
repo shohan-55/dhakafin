@@ -18,7 +18,11 @@
 <div class="eyebrow">SaaS workspace</div><h2 style="margin-bottom:10px">{{ $organization->name }}</h2><p class="muted">Accounting, tax, VAT, compliance and professional-service workflows converge here.</p>
 <div class="wsgrid" style="margin-top:28px">
 <div class="wscard"><h3>Compliance obligations</h3><p class="muted">{{ $openObligations->count() }} upcoming/open items loaded for this organization.</p></div>
-<div class="wscard"><h3>TDS / VDS</h3><p class="muted">Deterministic calculation engine is active; transaction workflow comes next.</p></div>
+@if(auth()->user()->hasPermission('tax.view',$organization))
+<div class="wscard"><h3>TDS / VDS</h3><p class="muted">Track calculation, counterparty and challan evidence by company.</p><a href="{{ route('workspace.withholding.index') }}"><strong>Open TDS / VDS →</strong></a></div>
+@else
+<div class="wscard"><h3>TDS / VDS</h3><p class="muted">Your current role does not include tax workspace access.</p></div>
+@endif
 <div class="wscard"><h3>Security</h3><p class="muted"><a href="{{ route('mfa.setup') }}">Configure MFA</a> and protect sensitive finance access.</p></div>
 </div>
 @if(auth()->user()->hasPermission('audit-log.view',$organization))
