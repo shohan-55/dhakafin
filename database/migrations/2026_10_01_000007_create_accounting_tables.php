@@ -35,6 +35,7 @@ return new class extends Migration
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('posted_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamp('posted_at')->nullable()->index();
+            $table->string('integrity_hash',64)->nullable()->index();
             $table->json('metadata')->nullable();
             $table->timestamps();
             $table->unique(['organization_id','number']);
