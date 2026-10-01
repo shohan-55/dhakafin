@@ -38,8 +38,7 @@
       "@php artisan key:generate --ansi"
     ],
     "test": [
-      "@php artisan config:clear --ansi",
-      "@php artisan test"
+      "vendor/bin/phpunit"
     ]
   },
   "config": {
