@@ -32,6 +32,15 @@ final class PaymentService
                     ->first();
 
                 if ($existing) {
+                    if (
+                        $existing->payment_date->toDateString() !== $paymentDate
+                        || $existing->amount_minor !== $amountMinor
+                        || $existing->method !== $method
+                        || $existing->reference !== $reference
+                    ) {
+                        throw new InvalidArgumentException('Idempotency key was already used with a different payment payload.');
+                    }
+
                     return $existing;
                 }
             }
