@@ -17,6 +17,7 @@ use App\Http\Controllers\Workspace\EngagementController;
 use App\Http\Controllers\Workspace\DocumentController;
 use App\Http\Controllers\Workspace\DocumentReviewController;
 use App\Http\Controllers\Workspace\BillingController;
+use App\Http\Controllers\Workspace\AccountingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomeController::class)->name('home');
@@ -118,5 +119,21 @@ Route::middleware('auth')->group(function (): void {
         Route::post('/billing/payments', [BillingController::class, 'storePayment'])
             ->middleware('permission:billing.manage')
             ->name('billing.payments.store');
+
+        Route::get('/accounting', [AccountingController::class, 'index'])
+            ->middleware('permission:accounting.view')
+            ->name('accounting.index');
+        Route::post('/accounting/chart/bootstrap', [AccountingController::class, 'bootstrapAccounts'])
+            ->middleware('permission:accounting.manage')
+            ->name('accounting.bootstrap');
+        Route::get('/accounting/journals/create', [AccountingController::class, 'createJournal'])
+            ->middleware('permission:accounting.manage')
+            ->name('accounting.journals.create');
+        Route::post('/accounting/journals', [AccountingController::class, 'storeJournal'])
+            ->middleware('permission:accounting.manage')
+            ->name('accounting.journals.store');
+        Route::patch('/accounting/journals/{journal}/post', [AccountingController::class, 'postJournal'])
+            ->middleware('permission:accounting.manage')
+            ->name('accounting.journals.post');
     });
 });
