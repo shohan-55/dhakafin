@@ -17,17 +17,18 @@ final class WithholdingCalculator
         }
 
         [$whole, $fraction] = array_pad(explode('.', $rate, 2), 2, '');
-        $basisPoints = ((int) $whole * 10000) + (int) str_pad(substr($fraction, 0, 4), 4, '0');
+        $ratePpm = ((int) $whole * 10000) + (int) str_pad(substr($fraction, 0, 4), 4, '0');
 
-        if ($basisPoints > 1000000) {
+        if ($ratePpm > 1000000) {
             throw new InvalidArgumentException('Rate cannot exceed 100%.');
         }
 
-        $withheldMinor = intdiv(($baseAmountMinor * $basisPoints) + 500000, 1000000);
+        $withheldMinor = intdiv(($baseAmountMinor * $ratePpm) + 500000, 1000000);
 
         return [
             'base_amount_minor' => $baseAmountMinor,
-            'rate_percent' => number_format($basisPoints / 10000, 4, '.', ''),
+            'rate_ppm' => $ratePpm,
+            'rate_percent' => number_format($ratePpm / 10000, 4, '.', ''),
             'withheld_amount_minor' => $withheldMinor,
             'net_amount_minor' => $baseAmountMinor - $withheldMinor,
         ];
