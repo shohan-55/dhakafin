@@ -24,8 +24,11 @@ class DatabaseSeeder extends Seeder
             'accounting.manage',
             'billing.view',
             'billing.manage',
+            'engagements.view',
+            'engagements.manage',
             'documents.view',
             'documents.manage',
+            'documents.review',
             'reports.view',
             'audit-log.view',
         ])->mapWithKeys(function (string $slug): array {
@@ -44,15 +47,17 @@ class DatabaseSeeder extends Seeder
                 'workspace.view','compliance.view','compliance.manage',
                 'tax.view','tax.manage','vat.view','vat.manage',
                 'accounting.view','accounting.manage','billing.view',
-                'documents.view','documents.manage','reports.view',
+                'engagements.view','engagements.manage',
+                'documents.view','documents.manage','documents.review','reports.view',
             ],
             'staff' => [
                 'workspace.view','compliance.view','tax.view','vat.view',
-                'accounting.view','documents.view','reports.view',
+                'accounting.view','engagements.view','engagements.manage',
+                'documents.view','documents.manage','documents.review','reports.view',
             ],
             'client' => [
                 'workspace.view','compliance.view','tax.view','vat.view',
-                'billing.view','documents.view','reports.view',
+                'billing.view','engagements.view','documents.view','documents.manage','reports.view',
             ],
         ];
 
